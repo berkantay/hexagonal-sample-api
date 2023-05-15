@@ -22,4 +22,4 @@ This weather condition api collects and returns the weather conditions at a give
 
 ## Proposal Architecture
 
-![Architecture Blueprint](resources/Firefly.png)
+![Architecture Blueprint](images/Firefly.png)
