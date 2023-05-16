@@ -25,11 +25,16 @@ func NewClient(config *config.Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) CityIntersect(ctx context.Context, coordinate domain.Coordinate) bool {
-	// data, err := c.client.Execute(ctx, "INTERSECTS", "cities POINT  40.731328 -74.067534")
-	// if err != nil {
-	// 	return false
-	// }
-	// fmt.Println(string(data))
-	return true
+func (c *Client) CityIntersectByCode(ctx context.Context, code string, coordinate domain.Coordinate) bool {
+	data, err := c.client.Search.Intersects("cities").Circle(coordinate.Latitude, coordinate.Longitude, 0).Do(ctx)
+	if err != nil {
+		return false
+	}
+
+	for _, c := range data.Objects {
+		if code == c.ID {
+			return true
+		}
+	}
+	return false
 }

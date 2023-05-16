@@ -16,12 +16,16 @@ type GeospatialRepository interface {
 	CheckArea(coordinate domain.Coordinate)
 }
 
-type weatherService struct {
+type WeatherService struct {
 	cacheRepository CacheRepository
 }
 
-func NewWeatherService(cache CacheRepository) *weatherService {
-	return &weatherService{
+func NewService(cache CacheRepository) *WeatherService {
+	return &WeatherService{
 		cacheRepository: cache,
 	}
+}
+
+func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coordinate) *domain.Weather {
+	return &domain.Weather{}
 }

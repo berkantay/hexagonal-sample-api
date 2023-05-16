@@ -6,9 +6,13 @@ import (
 	"os"
 
 	"github.com/berkantay/firefly-weather-condition-api/config"
+	"github.com/berkantay/firefly-weather-condition-api/internal/controller/http"
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
+	"github.com/berkantay/firefly-weather-condition-api/internal/repository/db"
 	"github.com/berkantay/firefly-weather-condition-api/internal/repository/tiles"
+	"github.com/berkantay/firefly-weather-condition-api/internal/weather"
 	"github.com/berkantay/firefly-weather-condition-api/pkg/log"
+	"github.com/gin-gonic/gin"
 )
 
 const version = "v0.0.1"
@@ -28,11 +32,29 @@ func main() {
 
 	fmt.Println(config)
 
-	tileClient, err := tiles.NewClient(config)
+	geospatialClient, err := tiles.NewClient(config)
 	if err != nil {
 		logger.Warn("could not connect geospatial database")
 		os.Exit(1)
 	}
 
-	tileClient.CityIntersect(context.TODO(), domain.Coordinate{})
+	isNewYork := geospatialClient.CityIntersectByCode(context.TODO(), "ny", domain.Coordinate{
+		Latitude:  40.731328,
+		Longitude: -74.067534,
+	})
+
+	fmt.Println(isNewYork)
+
+	cache, err := db.NewRedisStorage(config)
+	if err != nil {
+		logger.Warn("could not connect cache db")
+		os.Exit(1)
+	}
+
+	weatherService := weather.NewService(cache)
+
+	webEngine := gin.Default()
+	http.NewWeatherHandler(webEngine, weatherService)
+
+	webEngine.Run("0.0.0.0:8081")
 }
