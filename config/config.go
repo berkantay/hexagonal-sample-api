@@ -8,8 +8,9 @@ import (
 
 // Config provides methods for parsing configurations
 type Config struct {
-	Redis  Redis
-	Tile38 Tile38
+	Redis      Redis
+	Tile38     Tile38
+	WeatherApi WeatherApi
 }
 
 // Creates new configuration object with given configuration name and configuration path

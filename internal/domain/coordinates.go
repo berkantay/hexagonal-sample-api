@@ -1,4 +1,4 @@
-package coordinate
+package domain
 
 type Coordinate struct {
 	latitude  float64 `json:"latitude,omitempty"`

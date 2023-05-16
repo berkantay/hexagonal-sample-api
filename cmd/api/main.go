@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/berkantay/firefly-weather-condition-api/config"
-	"github.com/berkantay/firefly-weather-condition-api/internal/infrastucture/tiles"
+	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
+	"github.com/berkantay/firefly-weather-condition-api/internal/repository/tiles"
 	"github.com/berkantay/firefly-weather-condition-api/pkg/log"
 )
 
@@ -27,10 +28,11 @@ func main() {
 
 	fmt.Println(config)
 
-	_, err = tiles.NewClient(config)
+	tileClient, err := tiles.NewClient(config)
 	if err != nil {
 		logger.Warn("could not connect geospatial database")
 		os.Exit(1)
 	}
 
+	tileClient.CityIntersect(context.TODO(), domain.Coordinate{})
 }

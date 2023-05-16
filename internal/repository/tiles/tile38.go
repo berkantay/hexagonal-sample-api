@@ -1,7 +1,10 @@
 package tiles
 
 import (
+	"context"
+
 	"github.com/berkantay/firefly-weather-condition-api/config"
+	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
 	"github.com/xjem/t38c"
 )
 
@@ -22,6 +25,11 @@ func NewClient(config *config.Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) Client() *t38c.Client {
-	return c.client
+func (c *Client) CityIntersect(ctx context.Context, coordinate domain.Coordinate) bool {
+	// data, err := c.client.Execute(ctx, "INTERSECTS", "cities POINT  40.731328 -74.067534")
+	// if err != nil {
+	// 	return false
+	// }
+	// fmt.Println(string(data))
+	return true
 }
