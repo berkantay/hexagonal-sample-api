@@ -2,6 +2,7 @@ package weather
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
@@ -13,19 +14,24 @@ type CacheRepository interface {
 }
 
 type GeospatialRepository interface {
-	CheckArea(coordinate domain.Coordinate)
+	CityIntersectByCode(ctx context.Context, code string, coordinate *domain.Coordinate) bool
 }
 
 type WeatherService struct {
-	cacheRepository CacheRepository
+	cacheRepository    CacheRepository
+	geospatialDatabase GeospatialRepository
 }
 
-func NewService(cache CacheRepository) *WeatherService {
+func NewService(cache CacheRepository, geospatialDatabase GeospatialRepository) *WeatherService {
 	return &WeatherService{
-		cacheRepository: cache,
+		cacheRepository:    cache,
+		geospatialDatabase: geospatialDatabase,
 	}
 }
 
 func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coordinate) *domain.Weather {
+	if !ws.geospatialDatabase.CityIntersectByCode(ctx, "ny", coordinate) {
+		log.Println("not in area")
+	}
 	return &domain.Weather{}
 }

@@ -38,7 +38,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	isNewYork := geospatialClient.CityIntersectByCode(context.TODO(), "ny", domain.Coordinate{
+	isNewYork := geospatialClient.CityIntersectByCode(context.TODO(), "ny", &domain.Coordinate{
 		Latitude:  40.731328,
 		Longitude: -74.067534,
 	})
@@ -51,7 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	weatherService := weather.NewService(cache)
+	weatherService := weather.NewService(cache, geospatialClient)
 
 	webEngine := gin.Default()
 	http.NewWeatherHandler(webEngine, weatherService)

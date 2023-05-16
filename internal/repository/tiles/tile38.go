@@ -25,7 +25,7 @@ func NewClient(config *config.Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) CityIntersectByCode(ctx context.Context, code string, coordinate domain.Coordinate) bool {
+func (c *Client) CityIntersectByCode(ctx context.Context, code string, coordinate *domain.Coordinate) bool {
 	data, err := c.client.Search.Intersects("cities").Circle(coordinate.Latitude, coordinate.Longitude, 0).Do(ctx)
 	if err != nil {
 		return false
