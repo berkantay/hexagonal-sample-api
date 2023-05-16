@@ -22,4 +22,6 @@ This weather condition api collects and returns the weather conditions at a give
 
 ## Proposal Architecture
 
-![Architecture Blueprint](images/Firefly.png)
+![Architecture Blueprint](assets/images/Firefly.png)
+
+INTERSECTS cities POINT 40.731328 -74.067534

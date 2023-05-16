@@ -14,7 +14,7 @@ type RedisDatabase struct {
 
 func NewRedisStorage(config *config.Config) (*RedisDatabase, error) {
 	hostUrl := fmt.Sprintf("%s:%s",
-		config.Redis.Url,
+		config.Redis.Host,
 		config.Redis.Port,
 	)
 
@@ -33,6 +33,6 @@ func NewRedisStorage(config *config.Config) (*RedisDatabase, error) {
 	}, nil
 }
 
-func (rdb *RedisDatabase) Instance() *redis.Client {
+func (rdb *RedisDatabase) Client() *redis.Client {
 	return rdb.client
 }

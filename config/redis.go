@@ -1,7 +1,7 @@
 package config
 
 type Redis struct {
-	Url      string
+	Host     string
 	Port     string
 	Password string
 }
