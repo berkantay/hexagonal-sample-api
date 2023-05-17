@@ -15,10 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const version = "v0.0.1"
+// Version indicates the current version of the application.
+var Version = "development"
 
 func main() {
-	fmt.Println("Version:", version)
+	fmt.Println("Version:", Version)
 	fmt.Println("Hello Firefly!")
 
 	logger := log.NewLogger("api.log")
@@ -26,26 +27,32 @@ func main() {
 
 	config, err := config.NewConfig(context.Background(), "development", "resources")
 	if err != nil {
-		logger.Warn("could not read configuration")
-		os.Exit(1)
+		logger.Warn("could not read configuration, checking environment variables")
+		configureFromEnvironment(config)
+		fmt.Println("could not read configuration, checking environment variables")
 	}
+
+	fmt.Println("Config", config)
 
 	geospatialClient, err := tiles.NewClient(config)
 	if err != nil {
 		logger.Warn("could not connect geospatial database")
-		os.Exit(1)
+		fmt.Println("could not connect geospatial database")
+
 	}
 
 	cache, err := db.NewRedisStorage(config)
 	if err != nil {
 		logger.Warn("could not connect cache db")
-		os.Exit(1)
+		fmt.Println("could not connect cache db")
 	}
+	fmt.Println("Connected to redis client")
 
 	weatherClient, err := api.NewWeatherClient(config)
 	if err != nil {
 		logger.Warn("could not create client")
-		os.Exit(1)
+		fmt.Println("could not create client")
+
 	}
 
 	weatherService := weather.NewService(cache, geospatialClient, weatherClient)
@@ -54,4 +61,17 @@ func main() {
 	http.NewWeatherHandler(webEngine, weatherService)
 
 	webEngine.Run("0.0.0.0:8081")
+}
+
+func configureFromEnvironment(conf *config.Config) {
+	conf.Redis.Host = os.Getenv("REDIS_HOST")
+	conf.Redis.Port = os.Getenv("REDIS_PORT")
+	conf.Redis.Password = os.Getenv("REDIS_PASSWORD")
+
+	conf.Tile38.Host = os.Getenv("TILE38_HOST")
+	conf.Tile38.Port = os.Getenv("TILE38_PORT")
+
+	conf.WeatherApi.Address = os.Getenv("WEATHER_API_ADDRESS")
+	conf.WeatherApi.APIHost = os.Getenv("WEATHER_API_HOST")
+	conf.WeatherApi.APIKey = os.Getenv("WEATHER_API_KEY")
 }

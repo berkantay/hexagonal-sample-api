@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 
@@ -27,6 +28,7 @@ func NewWeatherClient(config *config.Config) (*WeatherClient, error) {
 }
 
 func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error) {
+	fmt.Println("Fetch weather called")
 	var weather domain.Weather
 
 	queryString := buildCoordinateQuery(coordinate)
@@ -45,6 +47,7 @@ func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Co
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
+		log.Println("Request error is:", err)
 		return nil, err
 	}
 	defer res.Body.Close()
@@ -53,7 +56,7 @@ func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Co
 	if err != nil {
 		return nil, err
 	}
-
+	log.Println("Response is", string(body))
 	err = json.Unmarshal(body, &weather)
 	if err != nil {
 		return nil, err

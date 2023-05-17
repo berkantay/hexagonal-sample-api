@@ -17,12 +17,12 @@ type Config struct {
 func NewConfig(ctx context.Context, configName string, configPath string) (*Config, error) {
 	v, err := readConfig(configName, configPath)
 	if err != nil {
-		return nil, err
+		return &Config{}, err
 	}
 
 	config := &Config{}
 	if err := v.Unmarshal(&config); err != nil {
-		return nil, err
+		return &Config{}, err
 	}
 	return config, nil
 }

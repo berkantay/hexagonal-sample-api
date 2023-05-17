@@ -1,0 +1,29 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  tile38:
+    image: tile38/tile38
+    container_name: tile38
+    ports:
+      - 9851:9851
+    restart: unless-stopped
+  firefly-weather-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+      - tile38
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TILE38_HOST=tile38
+      - TILE38_PORT=9851
+      - WEATHER_API_ADDRESS=https://weatherapi-com.p.rapidapi.com/current.json?
+      - WEATHER_API_KEY=fb94cc5f21mshf3022bc40ef1ab6p154a44jsn11d569099324
+      - WEATHER_API_HOST=weatherapi-com.p.rapidapi.com

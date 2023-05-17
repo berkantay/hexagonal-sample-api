@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
@@ -32,6 +33,7 @@ func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+	log.Println("weather called")
 
 	weather, err := wh.WeatherService.GetWeather(c.Request.Context(), "ny", &coordinate)
 	if err != nil {

@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
@@ -44,6 +46,8 @@ func (ws *WeatherService) GetWeather(ctx context.Context, cityCode string, coord
 	}
 
 	key := index.CreatKey(coordinate.Latitude, coordinate.Longitude, 9) //TODO: resolution value could be adjusted 0-16 according to granularity demands
+
+	fmt.Println("Key is", key)
 	if ws.cacheRepository.Exists(ctx, key) {
 		var weather domain.Weather
 		cache, err := ws.cacheRepository.Get(ctx, key)
@@ -62,6 +66,8 @@ func (ws *WeatherService) GetWeather(ctx context.Context, cityCode string, coord
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("Weather is", weather)
 
 	weatherBytes, err := json.Marshal(weather)
 	if err != nil {
