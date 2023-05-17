@@ -7,7 +7,7 @@ import (
 
 	"github.com/berkantay/firefly-weather-condition-api/config"
 	"github.com/berkantay/firefly-weather-condition-api/internal/controller/http"
-	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
+	"github.com/berkantay/firefly-weather-condition-api/internal/repository/api"
 	"github.com/berkantay/firefly-weather-condition-api/internal/repository/db"
 	"github.com/berkantay/firefly-weather-condition-api/internal/repository/tiles"
 	"github.com/berkantay/firefly-weather-condition-api/internal/weather"
@@ -30,20 +30,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(config)
-
 	geospatialClient, err := tiles.NewClient(config)
 	if err != nil {
 		logger.Warn("could not connect geospatial database")
 		os.Exit(1)
 	}
-
-	isNewYork := geospatialClient.CityIntersectByCode(context.TODO(), "ny", &domain.Coordinate{
-		Latitude:  40.731328,
-		Longitude: -74.067534,
-	})
-
-	fmt.Println(isNewYork)
 
 	cache, err := db.NewRedisStorage(config)
 	if err != nil {
@@ -51,7 +42,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	weatherService := weather.NewService(cache, geospatialClient)
+	weatherClient, err := api.NewWeatherClient(config)
+	if err != nil {
+		logger.Warn("could not create client")
+		os.Exit(1)
+	}
+
+	weatherService := weather.NewService(cache, geospatialClient, weatherClient)
 
 	webEngine := gin.Default()
 	http.NewWeatherHandler(webEngine, weatherService)

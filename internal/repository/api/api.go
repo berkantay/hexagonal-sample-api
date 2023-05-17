@@ -3,8 +3,10 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/berkantay/firefly-weather-condition-api/config"
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
@@ -24,9 +26,19 @@ func NewWeatherClient(config *config.Config) (*WeatherClient, error) {
 	}, nil
 }
 
-func (wc *WeatherClient) Fetch(ctx context.Context) (*domain.Weather, error) {
+func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error) {
 	var weather domain.Weather
-	req, _ := http.NewRequest("GET", wc.address, nil)
+
+	queryString := buildCoordinateQuery(coordinate)
+
+	params := url.Values{}
+	params.Add("q", queryString)
+
+	url := wc.address + params.Encode()
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
 
 	req.Header.Add("X-RapidAPI-Key", wc.XRapidAPIKey)
 	req.Header.Add("X-RapidAPI-Host", wc.XRapidAPIHost)
@@ -46,6 +58,9 @@ func (wc *WeatherClient) Fetch(ctx context.Context) (*domain.Weather, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &weather, nil
+}
+
+func buildCoordinateQuery(coordinate *domain.Coordinate) string {
+	return fmt.Sprintf("%.2f,%.2f", coordinate.Latitude, coordinate.Longitude)
 }

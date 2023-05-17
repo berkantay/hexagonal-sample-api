@@ -15,7 +15,7 @@ type Client struct {
 func NewClient(config *config.Config) (*Client, error) {
 	client, err := t38c.New(t38c.Config{
 		Address: "localhost:9851",
-		Debug:   true, // print queries to stdout
+		Debug:   false, // print queries to stdout
 	})
 	if err != nil {
 		return &Client{}, err

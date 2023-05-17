@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -37,29 +36,32 @@ func NewRedisStorage(config *config.Config) (*RedisDatabase, error) {
 }
 
 // Set stores the given tab data in the Cache.
-func (rdb *RedisDatabase) Set(ctx context.Context, cacheWeather domain.Cache, ttl time.Duration) (*domain.Cache, error) {
+func (rdb *RedisDatabase) Set(ctx context.Context, cacheWeather *domain.Cache, ttl time.Duration) (*domain.Cache, error) {
 	status := rdb.client.Set(ctx, cacheWeather.Key, cacheWeather.Value, ttl)
 	if status.Err() != nil {
 		return nil, status.Err()
 	}
-	return &cacheWeather, nil
+	return cacheWeather, nil
 }
 
 // Get retrieves the value associated with the specified key from the Cache.
 func (rdb *RedisDatabase) Get(ctx context.Context, key string) (*domain.Cache, error) {
-	var value domain.Weather
 	v, err := rdb.client.Get(ctx, key).Result()
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal([]byte(v), &value)
 	if err != nil {
 		return nil, err
 	}
 
 	return &domain.Cache{
 		Key:   key,
-		Value: value,
+		Value: v,
 	}, nil
+}
+
+func (rdb *RedisDatabase) Exists(ctx context.Context, key string) bool {
+	exists, err := rdb.client.Exists(ctx, key).Result()
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return exists != 0
 }

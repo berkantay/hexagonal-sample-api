@@ -6,6 +6,6 @@ tile38:
   host: "localhost"
   port: "9851"
 weatherApi:
-  address: "https://weatherapi-com.p.rapidapi.com/current.json"
+  address: "https://weatherapi-com.p.rapidapi.com/current.json?"
   apiKey: "fb94cc5f21mshf3022bc40ef1ab6p154a44jsn11d569099324"
   apiHost: "weatherapi-com.p.rapidapi.com"
