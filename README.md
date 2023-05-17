@@ -26,7 +26,14 @@ This weather condition api collects and returns the weather conditions at a give
 
 INTERSECTS cities POINT 40.731328 -74.067534
 
-### Get list of records with range
+## Usage
+
+```
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Get temperature on given coordinate
 
 #### Request
 
