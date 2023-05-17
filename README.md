@@ -14,7 +14,7 @@ This weather condition api collects and returns the weather conditions at a give
   - [x] You should use Uber's H3 resolution 8 index as the cache key and set TTL for the key such as 60 seconds. You can find the H3 hierarchical geospatial indexing system details at https://h3geo.org/.
   - [x] You can use a free weather service like https://rapidapi.com/weatherapi/api/weatherapi-com or any other one that you prefer.
 - [x] The service should be written using The GO Programming Language.
-- [ ] The service should be dockerized.
+- [x] The service should be dockerized.
 - [ ] Unit and Integration Tests should be written. Test coverage of more than 85% is expected.
 - [x] The Clean Architecture is preferred, but you can use any one that you prefer.
 - [x] You should share the project on the Github repo with AliCaner and Mecit.
@@ -32,6 +32,10 @@ INTERSECTS cities POINT 40.731328 -74.067534
 docker-compose build --no-cache
 docker-compose up -d
 ```
+
+#Important
+To inject polygon into _Tile38_
+`make geofence-migrate-newyork-local`
 
 ### Get temperature on given coordinate
 
