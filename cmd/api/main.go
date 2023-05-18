@@ -12,6 +12,7 @@ import (
 	"github.com/berkantay/firefly-weather-condition-api/internal/repository/tiles"
 	"github.com/berkantay/firefly-weather-condition-api/internal/weather"
 	"github.com/berkantay/firefly-weather-condition-api/pkg/log"
+	"github.com/common-nighthawk/go-figure"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +20,9 @@ import (
 var Version = "development"
 
 func main() {
-	fmt.Println("Version:", Version)
-	fmt.Println("Hello Firefly!")
+	banner := fmt.Sprintf("Firefly-%s", Version)
+	bannerFigure := figure.NewColorFigure(banner, "doom", "white", true)
+	bannerFigure.Print()
 
 	logger := log.NewLogger("api.log")
 	defer logger.Close()
@@ -29,10 +31,8 @@ func main() {
 	if err != nil {
 		logger.Warn("could not read configuration, checking environment variables")
 		configureFromEnvironment(config)
-		fmt.Println("could not read configuration, checking environment variables")
+		fmt.Println("Could not read configuration, checking environment variables...")
 	}
-
-	fmt.Println("Config", config)
 
 	geospatialClient, err := tiles.NewClient(config)
 	if err != nil {
@@ -46,7 +46,6 @@ func main() {
 		logger.Warn("could not connect cache db")
 		fmt.Println("could not connect cache db")
 	}
-	fmt.Println("Connected to redis client")
 
 	weatherClient, err := api.NewWeatherClient(config)
 	if err != nil {

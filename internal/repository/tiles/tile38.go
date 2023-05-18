@@ -15,7 +15,6 @@ type Client struct {
 
 func NewClient(config *config.Config) (*Client, error) {
 	tileUrl := fmt.Sprintf("%s:%s", config.Tile38.Host, config.Tile38.Port)
-	fmt.Println("tileurl is", tileUrl)
 	client, err := t38c.New(t38c.Config{
 		Address: tileUrl,
 		Debug:   false, // print queries to stdout
