@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -19,7 +18,7 @@ type CacheRepository interface {
 }
 
 type GeospatialRepository interface {
-	CityIntersectByCode(ctx context.Context, code string, coordinate *domain.Coordinate) bool
+	CityIntersect(ctx context.Context, coordinate *domain.Coordinate) bool
 }
 
 type WeatherClientRepository interface {
@@ -40,19 +39,18 @@ func NewService(cache CacheRepository, geospatialDatabase GeospatialRepository, 
 	}
 }
 
-func (ws *WeatherService) GetWeather(ctx context.Context, cityCode string, coordinate *domain.Coordinate) (*domain.Weather, error) {
-	if !ws.geospatialDatabase.CityIntersectByCode(ctx, cityCode, coordinate) {
+func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error) {
+	if !ws.geospatialDatabase.CityIntersect(ctx, coordinate) {
 		return &domain.Weather{}, errors.New("the point is not in the market area")
 	}
 
 	key := index.CreatKey(coordinate.Latitude, coordinate.Longitude, 9) //TODO: resolution value could be adjusted 0-16 according to granularity demands
 
-	fmt.Println("Key is", key)
 	if ws.cacheRepository.Exists(ctx, key) {
 		var weather domain.Weather
 		cache, err := ws.cacheRepository.Get(ctx, key)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("cache get operation failed")
 		}
 
 		err = json.Unmarshal([]byte(cache.Value), &weather)
@@ -77,7 +75,7 @@ func (ws *WeatherService) GetWeather(ctx context.Context, cityCode string, coord
 	ws.cacheRepository.Set(ctx, &domain.Cache{
 		Key:   key,
 		Value: string(weatherBytes),
-	}, 60)
+	}, 60*time.Second)
 
 	return weather, nil
 }

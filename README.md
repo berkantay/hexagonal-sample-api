@@ -4,7 +4,7 @@ This weather condition api collects and returns the weather conditions at a give
 
 ## To-Do
 
-- [ ] Write a service that returns weather conditions at a given Market.
+- [x] Write a service that returns weather conditions at a given Market.
   - [x] The service should take latitude and longitude as input.
   - [x] The service should check if the given Point(lat, long) is in the given Market, e.g. New York.
   - [x] Tile38 - Ultra Fast Geospatial Database & Geofencing Server should be used for this check.

@@ -10,7 +10,7 @@ import (
 )
 
 type WeatherService interface {
-	GetWeather(ctx context.Context, cityCode string, coordinate *domain.Coordinate) (*domain.Weather, error)
+	GetWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error)
 }
 
 type WeatherHandler struct {
@@ -35,7 +35,7 @@ func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 	}
 	log.Println("weather called")
 
-	weather, err := wh.WeatherService.GetWeather(c.Request.Context(), "ny", &coordinate)
+	weather, err := wh.WeatherService.GetWeather(c.Request.Context(), &coordinate)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
