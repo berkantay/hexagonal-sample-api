@@ -15,7 +15,7 @@ This weather condition api collects and returns the weather conditions at a give
   - [x] You can use a free weather service like https://rapidapi.com/weatherapi/api/weatherapi-com or any other one that you prefer.
 - [x] The service should be written using The GO Programming Language.
 - [x] The service should be dockerized.
-- [ ] Unit and Integration Tests should be written. Test coverage of more than 85% is expected.
+- [x] Unit and Integration Tests should be written. Test coverage of more than 85% is expected.
 - [x] The Clean Architecture is preferred, but you can use any one that you prefer.
 - [x] You should share the project on the Github repo with AliCaner and Mecit.
 - [x] Demonstrating progressive development (e.g. not just a commit) and proper GitHub usage is a plus.
@@ -24,19 +24,35 @@ This weather condition api collects and returns the weather conditions at a give
 
 ![Architecture Blueprint](assets/images/Firefly.png)
 
-INTERSECTS cities POINT 40.731328 -74.067534
+## Testing
+
+```
+make unit-test
+```
+
+Then total coverage is %85.7. Also cover.html is generated to check the covered and uncovered lines.
 
 ## Usage
 
 ```
 docker-compose build --no-cache
-docker-compose up -d
+docker-compose up
 ```
+
+`docker-compose up -d` if daemon mode desired.
+Then application will be running at **localhost:8081**
 
 # Important
 
 To inject polygon into _Tile38_
-`make geofence-migrate-newyork-local`
+
+```
+make geofence-migrate-newyork-local
+```
+
+## Terminal Output
+
+![SS](assets/images/screenshot.png)
 
 ### Get temperature on given coordinate
 

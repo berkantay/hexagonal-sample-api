@@ -28,7 +28,6 @@ func NewWeatherClient(config *config.Config) (*WeatherClient, error) {
 }
 
 func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error) {
-	fmt.Println("Fetch weather called")
 	var weather domain.Weather
 
 	queryString := buildCoordinateQuery(coordinate)

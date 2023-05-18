@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
@@ -44,7 +43,7 @@ func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coo
 		return &domain.Weather{}, errors.New("the point is not in the market area")
 	}
 
-	key := index.CreatKey(coordinate.Latitude, coordinate.Longitude, 9) //TODO: resolution value could be adjusted 0-16 according to granularity demands
+	key := index.CreateKey(coordinate.Latitude, coordinate.Longitude, 9) //TODO: resolution value could be adjusted 0-16 according to granularity demands
 
 	if ws.cacheRepository.Exists(ctx, key) {
 		var weather domain.Weather
@@ -64,8 +63,6 @@ func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coo
 	if err != nil {
 		return nil, err
 	}
-
-	log.Println("Weather is", weather)
 
 	weatherBytes, err := json.Marshal(weather)
 	if err != nil {
