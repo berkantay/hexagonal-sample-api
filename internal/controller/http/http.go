@@ -9,14 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// WeatherService is an interface that defines methods for retrieving weather information.
 type WeatherService interface {
 	GetWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error)
 }
 
+// WeatherHandler handles HTTP requests related to weather.
 type WeatherHandler struct {
 	WeatherService WeatherService
 }
 
+// NewWeatherHandler creates a new instance of WeatherHandler.
 func NewWeatherHandler(engine *gin.Engine, weatherService WeatherService) {
 	wh := &WeatherHandler{
 		WeatherService: weatherService,
@@ -24,6 +27,7 @@ func NewWeatherHandler(engine *gin.Engine, weatherService WeatherService) {
 	engine.GET("/weather", wh.GetWeather)
 }
 
+// GetWeather handles the GET /weather endpoint.
 func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 	var coordinate domain.Coordinate
 
@@ -39,5 +43,4 @@ func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, weather)
-
 }

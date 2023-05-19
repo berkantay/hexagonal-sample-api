@@ -61,11 +61,31 @@ func TestWeatherHandlerGetWeatherWrong(t *testing.T) {
 		}
 		NewWeatherHandler(router, weatherService)
 		t.Run("When GET request is sent with WRONG query parameters", func(t *testing.T) {
-			req, _ := http.NewRequest("GET", "/weather?latitude=&longitude=-74.0060", nil)
+			req, _ := http.NewRequest("GET", "/weather?latitude=40.7128&longitude=-74.0060", nil)
 			rec := httptest.NewRecorder()
 			router.ServeHTTP(rec, req)
 			t.Run("Then response must return error ", func(t *testing.T) {
 				assert.Equal(t, http.StatusInternalServerError, rec.Code)
+				fmt.Println("Result is", rec.Body)
+			})
+		})
+	})
+}
+
+func TestWeatherHandlerGetWeatherServiceFail(t *testing.T) {
+	t.Run("Given the http server is running", func(t *testing.T) {
+		router := gin.Default()
+		weatherService := &mockWeatherService{
+			mockWeather: nil,
+			mockError:   errors.New("test"),
+		}
+		NewWeatherHandler(router, weatherService)
+		t.Run("When GET request is sent with WRONG query parameters", func(t *testing.T) {
+			req, _ := http.NewRequest("GET", "/weather?latitude=", nil)
+			rec := httptest.NewRecorder()
+			router.ServeHTTP(rec, req)
+			t.Run("Then response must return error ", func(t *testing.T) {
+				assert.Equal(t, http.StatusBadRequest, rec.Code)
 				fmt.Println("Result is", rec.Body)
 			})
 		})

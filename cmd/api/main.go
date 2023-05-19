@@ -54,7 +54,7 @@ func main() {
 
 	}
 
-	weatherService := weather.NewService(cache, geospatialClient, weatherClient)
+	weatherService := weather.NewService(logger, cache, geospatialClient, weatherClient)
 
 	webEngine := gin.Default()
 	http.NewWeatherHandler(webEngine, weatherService)

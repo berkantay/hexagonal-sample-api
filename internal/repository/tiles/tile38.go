@@ -9,10 +9,12 @@ import (
 	"github.com/xjem/t38c"
 )
 
+// Client is responsible for interacting with a Tile38 server.
 type Client struct {
 	client *t38c.Client
 }
 
+// NewClient creates a new instance of Client.
 func NewClient(config *config.Config) (*Client, error) {
 	tileUrl := fmt.Sprintf("%s:%s", config.Tile38.Host, config.Tile38.Port)
 	client, err := t38c.New(t38c.Config{
@@ -27,6 +29,7 @@ func NewClient(config *config.Config) (*Client, error) {
 	}, nil
 }
 
+// CityIntersect checks if a given coordinate intersects with a city in Tile38.
 func (c *Client) CityIntersect(ctx context.Context, coordinate *domain.Coordinate) bool {
 	data, err := c.client.Search.Intersects("cities").Circle(coordinate.Latitude, coordinate.Longitude, 0).Do(ctx)
 	if err != nil {

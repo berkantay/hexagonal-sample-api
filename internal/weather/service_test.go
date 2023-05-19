@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
 	"github.com/berkantay/firefly-weather-condition-api/internal/index"
+	"github.com/berkantay/firefly-weather-condition-api/pkg/log"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,6 +52,8 @@ func (mwc *mockWeatherClient) FetchWeather(ctx context.Context, coordinate *doma
 }
 
 func TestCityDoesNotIntersect(t *testing.T) {
+	mocklogger := log.NewLogger("test.log")
+
 	t.Run("Given coordinates", func(t *testing.T) {
 		mockCoordinate := domain.Coordinate{
 			Latitude:  generateRandomLatitude(),
@@ -62,7 +64,7 @@ func TestCityDoesNotIntersect(t *testing.T) {
 				isIntersect: false,
 			}
 			t.Run("Then it should return error message", func(t *testing.T) {
-				weatherService := NewService(&mockCacheRepository{}, &mockGeo, &mockWeatherClient{})
+				weatherService := NewService(mocklogger, &mockCacheRepository{}, &mockGeo, &mockWeatherClient{})
 				result, err := weatherService.GetWeather(context.Background(), &mockCoordinate)
 				assert.Equal(t, result, &domain.Weather{})
 				assert.NotNil(t, err)
@@ -74,6 +76,8 @@ func TestCityDoesNotIntersect(t *testing.T) {
 }
 
 func TestCityDoesIntersect(t *testing.T) {
+	mocklogger := log.NewLogger("test.log")
+
 	t.Run("Given coordinates", func(t *testing.T) {
 		mockLat := generateRandomLatitude()
 		mockLon := generateRandomLongitude()
@@ -86,7 +90,7 @@ func TestCityDoesIntersect(t *testing.T) {
 				isIntersect: true,
 			}
 			t.Run("Then it should return error message", func(t *testing.T) {
-				weatherService := NewService(&mockCacheRepository{}, &mockGeo, &mockWeatherClient{})
+				weatherService := NewService(mocklogger, &mockCacheRepository{}, &mockGeo, &mockWeatherClient{})
 				result, err := weatherService.GetWeather(context.Background(), &mockCoordinate)
 				assert.NotEqual(t, result, &domain.Weather{})
 				assert.Nil(t, err)
@@ -97,6 +101,8 @@ func TestCityDoesIntersect(t *testing.T) {
 }
 
 func TestCityDoesIntersectExistInCacheButGetFail(t *testing.T) {
+	mocklogger := log.NewLogger("test.log")
+
 	t.Run("Given coordinates", func(t *testing.T) {
 		mockLat := generateRandomLatitude()
 		mockLon := generateRandomLongitude()
@@ -115,7 +121,7 @@ func TestCityDoesIntersectExistInCacheButGetFail(t *testing.T) {
 				mockCache: &domain.Cache{},
 			}
 			t.Run("Then it should return error message", func(t *testing.T) {
-				weatherService := NewService(mockCache, mockGeo, &mockWeatherClient{})
+				weatherService := NewService(mocklogger, mockCache, mockGeo, &mockWeatherClient{})
 				result, err := weatherService.GetWeather(context.Background(), &mockCoordinate)
 				assert.Nil(t, result)
 				assert.Equal(t, err.Error(), mockCache.getError.Error())
@@ -125,6 +131,8 @@ func TestCityDoesIntersectExistInCacheButGetFail(t *testing.T) {
 }
 
 func TestCityDoesIntersectExistInCacheGetSuccess(t *testing.T) {
+	mocklogger := log.NewLogger("test.log")
+
 	t.Run("Given coordinates", func(t *testing.T) {
 		mockLat := generateRandomLatitude()
 		mockLon := generateRandomLongitude()
@@ -145,14 +153,12 @@ func TestCityDoesIntersectExistInCacheGetSuccess(t *testing.T) {
 				},
 				mockError: nil,
 			}
-			mockValue, err := json.Marshal(&domain.Weather{
+			mockValue, _ := json.Marshal(&domain.Weather{
 				Location: domain.Location{
 					Name: "test",
 				},
 			})
-			if err != nil {
-				log.Fatal(err)
-			}
+
 			mockCache := &mockCacheRepository{
 				getError:  nil,
 				setError:  nil,
@@ -163,7 +169,7 @@ func TestCityDoesIntersectExistInCacheGetSuccess(t *testing.T) {
 				},
 			}
 			t.Run("Then it should return weather", func(t *testing.T) {
-				weatherService := NewService(mockCache, mockGeo, mockWeatherClientTest)
+				weatherService := NewService(mocklogger, mockCache, mockGeo, mockWeatherClientTest)
 				result, err := weatherService.GetWeather(context.Background(), &mockCoordinate)
 				assert.Nil(t, err)
 				assert.Equal(t, mockCache.mockCache.Key, tempH3Key)
@@ -175,6 +181,8 @@ func TestCityDoesIntersectExistInCacheGetSuccess(t *testing.T) {
 }
 
 func TestCityDoesIntersectDoesNotExistInCacheGetSuccess(t *testing.T) {
+	mocklogger := log.NewLogger("test.log")
+
 	t.Run("Given coordinates", func(t *testing.T) {
 		mockLat := generateRandomLatitude()
 		mockLon := generateRandomLongitude()
@@ -195,14 +203,12 @@ func TestCityDoesIntersectDoesNotExistInCacheGetSuccess(t *testing.T) {
 				},
 				mockError: nil,
 			}
-			mockValue, err := json.Marshal(&domain.Weather{
+			mockValue, _ := json.Marshal(&domain.Weather{
 				Location: domain.Location{
 					Name: "test",
 				},
 			})
-			if err != nil {
-				log.Fatal(err)
-			}
+
 			mockCache := &mockCacheRepository{
 				getError:  nil,
 				setError:  nil,
@@ -213,7 +219,7 @@ func TestCityDoesIntersectDoesNotExistInCacheGetSuccess(t *testing.T) {
 				},
 			}
 			t.Run("Then it should cache it and return weather", func(t *testing.T) {
-				weatherService := NewService(mockCache, mockGeo, mockWeatherClientTest)
+				weatherService := NewService(mocklogger, mockCache, mockGeo, mockWeatherClientTest)
 				result, err := weatherService.GetWeather(context.Background(), &mockCoordinate)
 				assert.Nil(t, err)
 				assert.Equal(t, mockCache.mockCache.Key, tempH3Key)

@@ -13,12 +13,14 @@ import (
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
 )
 
+// WeatherClient is responsible for fetching weather data from an API.
 type WeatherClient struct {
 	address       string
 	XRapidAPIKey  string
 	XRapidAPIHost string
 }
 
+// NewWeatherClient creates a new instance of WeatherClient.
 func NewWeatherClient(config *config.Config) (*WeatherClient, error) {
 	return &WeatherClient{
 		address:       config.WeatherApi.Address,
@@ -27,6 +29,7 @@ func NewWeatherClient(config *config.Config) (*WeatherClient, error) {
 	}, nil
 }
 
+// FetchWeather retrieves weather data for the given coordinate.
 func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Coordinate) (*domain.Weather, error) {
 	var weather domain.Weather
 
@@ -63,6 +66,7 @@ func (wc *WeatherClient) FetchWeather(ctx context.Context, coordinate *domain.Co
 	return &weather, nil
 }
 
+// buildCoordinateQuery creates a formatted query string for the given coordinate.
 func buildCoordinateQuery(coordinate *domain.Coordinate) string {
 	return fmt.Sprintf("%.2f,%.2f", coordinate.Latitude, coordinate.Longitude)
 }
