@@ -30,6 +30,10 @@ This weather condition api collects and returns the weather conditions at a give
 make unit-test
 ```
 
+```
+make integration-test
+```
+
 Then total coverage is %85.7. Also cover.html is generated to check the covered and uncovered lines.
 
 ## Usage
