@@ -4,6 +4,7 @@ build:
 	go build cmd/api/main.go
 
 service-up:
+	docker-compose build --no-cache
 	docker-compose up
 
 unit-test:

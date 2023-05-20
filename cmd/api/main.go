@@ -24,6 +24,12 @@ func main() {
 	bannerFigure := figure.NewColorFigure(banner, "doom", "white", true)
 	bannerFigure.Print()
 
+	webEngine := setupWeatherService()
+
+	webEngine.Run("0.0.0.0:8081")
+}
+
+func setupWeatherService() *gin.Engine {
 	logger := log.NewLogger("api.log")
 	defer logger.Close()
 
@@ -59,7 +65,7 @@ func main() {
 	webEngine := gin.Default()
 	http.NewWeatherHandler(webEngine, weatherService)
 
-	webEngine.Run("0.0.0.0:8081")
+	return webEngine
 }
 
 func configureFromEnvironment(conf *config.Config) {

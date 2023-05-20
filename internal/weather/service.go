@@ -74,7 +74,7 @@ func (ws *WeatherService) GetWeather(ctx context.Context, coordinate *domain.Coo
 		var weather domain.Weather
 		cache, err := ws.cacheRepository.Get(ctx, key)
 		if err != nil {
-			ws.logger.Warn("the point is not in the market area")
+			ws.logger.Warn("cache get operation failed")
 			return nil, errors.New("cache get operation failed")
 		}
 
