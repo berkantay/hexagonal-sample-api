@@ -51,7 +51,8 @@ fi
 response=$(curl --location --request GET "http://localhost:8081/weather" -s -D -)
 status_code=$(echo "$response" | grep -i '^HTTP' | awk '{print $2}')
 response_body=$(echo "$response" | sed -e '1,/^\r$/d')
-expected_response='{"error":{}}'
+expected_response='{"error":"invalid request"}'
+echo "$response_body"
 if [[ "$status_code" -ne 400 ]] ; then
   echo "integration test failed -- on missing query parameters ❌ "
 else

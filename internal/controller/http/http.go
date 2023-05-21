@@ -33,7 +33,7 @@ func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 
 	err := c.ShouldBindQuery(&coordinate)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("invalid request")})
+		c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("invalid request").Error()})
 		return
 	}
 
