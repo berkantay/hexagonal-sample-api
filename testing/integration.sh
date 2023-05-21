@@ -19,31 +19,47 @@ docker-compose up -d
 echo "Injecting geojson into tile38 🗺️"
 make geofence-migrate-newyork-local
 
-status_code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8081/weather?latitude=40.731328&longitude=-74.067534")
-# Output the status code
-echo "Status code of correct query parameters: $status_code"
+response=$(curl --location --request GET "http://localhost:8081/weather?latitude=40.331328&longitude=-74.077534" -s -D -)
+status_code=$(echo "$response" | grep -i '^HTTP' | awk '{print $2}')
+response_body=$(echo "$response" | sed -e '1,/^\r$/d')
+
 if [[ "$status_code" -ne 200 ]] ; then
-  echo "integration test failed ❌ - on correct query parameters"
+  echo "integration test failed ❌ "
 else
   echo "correct query parameters ✅"
 fi
 
+#Response body match could not performed because external api and wheather condition is changed by time. Therefore expected body cannot be statically written
 
-# Output the status code
-status_code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8081/weather?latitude=40.731328&longitude=4.067534")
-echo "Status code of non overlapping coordinate: $status_code"
+response=$(curl --location --request GET "http://localhost:8081/weather?latitude=40.731328&longitude=4.067534" -s -D -)
+status_code=$(echo "$response" | grep -i '^HTTP' | awk '{print $2}')
+response_body=$(echo "$response" | sed -e '1,/^\r$/d')
+expected_response='{"error":"the point is not in the market area"}'
+
 if [[ "$status_code" -ne 422 ]] ; then
-  echo "integration test failed ❌ - on non overlapping coordinate"
+  echo "integration test failed - on non overlapping coordinate❌ "
 else
   echo "non overlapping coordinate ✅"
 fi
 
-# Output the status code
-status_code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:8081/weather")
-echo "Status code of missing query parameters: $status_code"
+if [[ "$response_body" == "$expected_response" ]]; then
+  echo "Response body matches the expected JSON.-- non overlapping coordinate ✅ "
+else
+  echo "Response body DOES NOT matches the expected JSON. --  non overlapping coordinate" ❌
+fi
+
+response=$(curl --location --request GET "http://localhost:8081/weather" -s -D -)
+status_code=$(echo "$response" | grep -i '^HTTP' | awk '{print $2}')
+response_body=$(echo "$response" | sed -e '1,/^\r$/d')
+expected_response='{"error":{}}'
 if [[ "$status_code" -ne 400 ]] ; then
-  echo "integration test failed ❌ - on missing query parameters"
+  echo "integration test failed -- on missing query parameters ❌ "
 else
   echo "missing query parameters ✅"
-  exit 0
+fi
+
+if [[ "$response_body" == "$expected_response" ]]; then
+  echo "Response body matches the expected JSON. -- on missing query parameters ✅ "
+else
+  echo "Response body DOES NOT matches the expected JSON. -- on missing query parameters ❌ "
 fi
