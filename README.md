@@ -58,6 +58,9 @@ make geofence-migrate-newyork-local
 
 ![SS](assets/images/screenshot.png)
 
+K6 Load Test Result
+![SS](assets/images/loadtest.png)
+
 ## API Documentation
 
 API Documentation implemented. Visit `http://localhost:8081/swagger/index.html`
