@@ -2,11 +2,13 @@ package http
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
+	docs "github.com/berkantay/firefly-weather-condition-api/docs"
 	"github.com/berkantay/firefly-weather-condition-api/internal/domain"
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // WeatherService is an interface that defines methods for retrieving weather information.
@@ -24,16 +26,33 @@ func NewWeatherHandler(engine *gin.Engine, weatherService WeatherService) {
 	wh := &WeatherHandler{
 		WeatherService: weatherService,
 	}
+
+	docs.SwaggerInfo.BasePath = "/"
+
 	engine.GET("/weather", wh.GetWeather)
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
 
 // GetWeather handles the GET /weather endpoint.
+// @BasePath /
+
+// Firefly-weather-condition-api godoc
+// @Summary Get weather condition for a coordinate
+// @Description Get weather condition for a coordinate.
+// @Accept json
+// @Produce json
+// @Param   latitude    query    string     true        "Latitude"
+// @Param   longitude     query    string     true        "Longitude"
+// @Success 200 {array} domain.Weather
+// @Failure 400 {object} domain.ErrorResponse
+// @Failure 422 {object} domain.ErrorResponse
+// @Router /weather/ [get]
 func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 	var coordinate domain.Coordinate
 
 	err := c.ShouldBindQuery(&coordinate)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": errors.New("invalid request").Error()})
+		c.JSON(http.StatusBadRequest, domain.ErrorResponse{Error: "invalid request"})
 		return
 	}
 

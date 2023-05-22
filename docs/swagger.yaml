@@ -1,0 +1,129 @@
+basePath: /
+definitions:
+  domain.Condition:
+    properties:
+      code:
+        type: integer
+      icon:
+        type: string
+      text:
+        type: string
+    type: object
+  domain.Current:
+    properties:
+      cloud:
+        type: integer
+      condition:
+        $ref: '#/definitions/domain.Condition'
+      feelslike_c:
+        type: number
+      feelslike_f:
+        type: number
+      gust_kph:
+        type: number
+      gust_mph:
+        type: number
+      humidity:
+        type: integer
+      is_day:
+        type: integer
+      last_updated:
+        type: string
+      last_updated_epoch:
+        type: integer
+      precip_in:
+        type: number
+      precip_mm:
+        type: number
+      pressure_in:
+        type: number
+      pressure_mb:
+        type: number
+      temp_c:
+        type: number
+      temp_f:
+        type: number
+      uv:
+        type: number
+      vis_km:
+        type: number
+      vis_miles:
+        type: number
+      wind_degree:
+        type: integer
+      wind_dir:
+        type: string
+      wind_kph:
+        type: number
+      wind_mph:
+        type: number
+    type: object
+  domain.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  domain.Location:
+    properties:
+      country:
+        type: string
+      lat:
+        type: number
+      localtime:
+        type: string
+      localtime_epoch:
+        type: integer
+      lon:
+        type: number
+      name:
+        type: string
+      region:
+        type: string
+      tz_id:
+        type: string
+    type: object
+  domain.Weather:
+    properties:
+      current:
+        $ref: '#/definitions/domain.Current'
+      location:
+        $ref: '#/definitions/domain.Location'
+    type: object
+info:
+  contact: {}
+paths:
+  /weather/:
+    get:
+      consumes:
+      - application/json
+      description: Get weather condition for a coordinate.
+      parameters:
+      - description: Latitude
+        in: query
+        name: latitude
+        required: true
+        type: string
+      - description: Longitude
+        in: query
+        name: longitude
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Weather'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Get weather condition for a coordinate
+swagger: "2.0"

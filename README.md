@@ -34,7 +34,7 @@ make unit-test
 make integration-test
 ```
 
-Then total coverage is %85.7. Also cover.html is generated to check the covered and uncovered lines.
+Then total coverage is %84.1. Also cover.html is generated to check the covered and uncovered lines.
 
 ## Usage
 
@@ -57,6 +57,10 @@ make geofence-migrate-newyork-local
 ## Terminal Output
 
 ![SS](assets/images/screenshot.png)
+
+## API Documentation
+
+API Documentation implemented. Visit `http://localhost:8081/swagger/index.html`
 
 ### Get temperature on given coordinate
 
