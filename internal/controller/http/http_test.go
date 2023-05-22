@@ -91,3 +91,23 @@ func TestWeatherHandlerGetWeatherServiceFail(t *testing.T) {
 		})
 	})
 }
+
+func TestWeatherHandlerGetWeatherServiceNotInArea(t *testing.T) {
+	t.Run("Given the http server is running", func(t *testing.T) {
+		router := gin.Default()
+		weatherService := &mockWeatherService{
+			mockWeather: nil,
+			mockError:   errors.New("the point is not in the market area"),
+		}
+		NewWeatherHandler(router, weatherService)
+		t.Run("When GET request is sent with correct query parameters but not in the area", func(t *testing.T) {
+			req, _ := http.NewRequest("GET", "/weather?latitude=40.7128&longitude=-44.0060", nil)
+			rec := httptest.NewRecorder()
+			router.ServeHTTP(rec, req)
+			t.Run("Then response must return error 422 ", func(t *testing.T) {
+				assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+				fmt.Println("Result is", rec.Body)
+			})
+		})
+	})
+}

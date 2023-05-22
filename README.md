@@ -34,7 +34,7 @@ make unit-test
 make integration-test
 ```
 
-Then total coverage is %84.1. Also cover.html is generated to check the covered and uncovered lines.
+Then total coverage is %86.4. Also cover.html is generated to check the covered and uncovered lines.
 
 ## Usage
 

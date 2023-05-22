@@ -60,9 +60,9 @@ func (wh *WeatherHandler) GetWeather(c *gin.Context) {
 	if err != nil {
 		switch {
 		case err.Error() == "the point is not in the market area":
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			c.JSON(http.StatusUnprocessableEntity, domain.ErrorResponse{Error: err.Error()})
 		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			c.JSON(http.StatusInternalServerError, domain.ErrorResponse{Error: "internal server error"})
 		}
 		return
 	}
