@@ -63,7 +63,6 @@ func (rdb *RedisDatabase) Get(ctx context.Context, key string) (*domain.Cache, e
 func (rdb *RedisDatabase) Exists(ctx context.Context, key string) bool {
 	exists, err := rdb.client.Exists(ctx, key).Result()
 	if err != nil {
-		fmt.Println(err)
 		return false
 	}
 	return exists != 0
