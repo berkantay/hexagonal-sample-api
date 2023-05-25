@@ -69,7 +69,7 @@ API Documentation implemented. Visit `http://localhost:8081/swagger/index.html`
 
 #### Request
 
-`POST /stock/`
+`POST /weather/`
 
 `curl "http://localhost:8081/weather?latitude=40.731328&longitude=-74.067534"`
 
