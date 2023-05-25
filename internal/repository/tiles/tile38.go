@@ -42,3 +42,7 @@ func (c *Client) CityIntersect(ctx context.Context, coordinate *domain.Coordinat
 
 	return false
 }
+
+func (c *Client) Close(ctx context.Context) error {
+	return c.client.Close()
+}

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/berkantay/firefly-weather-condition-api/config"
 	"github.com/berkantay/firefly-weather-condition-api/internal/controller/http"
@@ -24,38 +26,40 @@ func main() {
 	bannerFigure := figure.NewColorFigure(banner, "doom", "white", true)
 	bannerFigure.Print()
 
-	webEngine := setupWeatherService()
-
-	webEngine.Run("0.0.0.0:8081")
-}
-
-func setupWeatherService() *gin.Engine {
 	logger := log.NewLogger("api.log")
 	defer logger.Close()
 
 	config, err := config.NewConfig(context.Background(), "development", "resources")
 	if err != nil {
-		logger.Warn("could not read configuration, checking environment variables")
+		logger.Warn("could not read configuration, checking environment variables", map[string]interface{}{
+			"error": err,
+		})
 		configureFromEnvironment(config)
 		fmt.Println("Could not read configuration, checking environment variables...")
 	}
 
 	geospatialClient, err := tiles.NewClient(config)
 	if err != nil {
-		logger.Warn("could not connect geospatial database")
+		logger.Warn("could not connect geospatial database", map[string]interface{}{
+			"error": err,
+		})
 		fmt.Println("could not connect geospatial database")
 
 	}
 
 	cache, err := db.NewRedisStorage(config)
 	if err != nil {
-		logger.Warn("could not connect cache db")
+		logger.Warn("could not connect cache db", map[string]interface{}{
+			"error": err,
+		})
 		fmt.Println("could not connect cache db")
 	}
 
 	weatherClient, err := api.NewWeatherClient(config)
 	if err != nil {
-		logger.Warn("could not create client")
+		logger.Warn("could not create client", map[string]interface{}{
+			"error": err,
+		})
 		fmt.Println("could not create client")
 
 	}
@@ -65,7 +69,22 @@ func setupWeatherService() *gin.Engine {
 	webEngine := gin.Default()
 	http.NewWeatherHandler(webEngine, weatherService)
 
-	return webEngine
+	gracefulShutdown := make(chan os.Signal, 1)
+	signal.Notify(gracefulShutdown, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-gracefulShutdown // Wait for the signal
+		logger.Info("Shutting down...")
+		cache.Close(context.TODO())
+		geospatialClient.Close(context.TODO())
+		os.Exit(0)
+	}()
+
+	// Start the web server
+	err = webEngine.Run("0.0.0.0:8081")
+	if err != nil {
+		logger.Warn("failed to start server")
+	}
 }
 
 func configureFromEnvironment(conf *config.Config) {

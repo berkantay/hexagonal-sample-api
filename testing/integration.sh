@@ -19,6 +19,8 @@ docker-compose up -d
 echo "Injecting geojson into tile38 🗺️"
 make geofence-migrate-newyork-local
 
+sleep 1
+
 response=$(curl --location --request GET "http://localhost:8081/weather?latitude=40.331328&longitude=-74.077534" -s -D -)
 status_code=$(echo "$response" | grep -i '^HTTP' | awk '{print $2}')
 response_body=$(echo "$response" | sed -e '1,/^\r$/d')

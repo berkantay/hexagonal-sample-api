@@ -67,3 +67,7 @@ func (rdb *RedisDatabase) Exists(ctx context.Context, key string) bool {
 	}
 	return exists != 0
 }
+
+func (rdb *RedisDatabase) Close(ctx context.Context) error {
+	return rdb.client.Close()
+}
