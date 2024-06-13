@@ -1,4 +1,4 @@
-# firefly-weather-condition-api
+# Hexagonal architecture example
 
 This weather condition api collects and returns the weather conditions at a given Market.
 
