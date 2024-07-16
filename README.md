@@ -50,9 +50,6 @@ To inject polygon into _Tile38_
 make geofence-migrate-newyork-local
 ```
 
-K6 Load Test Result
-![SS](assets/images/loadtest.png)
-
 ## API Documentation
 
 API Documentation implemented. Visit `http://localhost:8081/swagger/index.html`
