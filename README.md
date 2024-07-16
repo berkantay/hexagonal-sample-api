@@ -20,10 +20,6 @@ This weather condition api collects and returns the weather conditions at a give
 - [x] You should share the project on the Github repo with AliCaner and Mecit.
 - [x] Demonstrating progressive development (e.g. not just a commit) and proper GitHub usage is a plus.
 
-## Proposal Architecture
-
-![Architecture Blueprint](assets/images/Firefly.png)
-
 ## Testing
 
 ```
