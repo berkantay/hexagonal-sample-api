@@ -50,10 +50,6 @@ To inject polygon into _Tile38_
 make geofence-migrate-newyork-local
 ```
 
-## Terminal Output
-
-![SS](assets/images/screenshot.png)
-
 K6 Load Test Result
 ![SS](assets/images/loadtest.png)
 
